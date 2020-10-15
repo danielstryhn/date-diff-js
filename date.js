@@ -16,8 +16,6 @@ class DateDiff {
       11: 30,
       12: 31,
     };
-    const diff = this.calculateDaysBetween(this.startDate, this.endDate);
-    console.log("Days between:", diff);
   }
 
   stringToDate(date) {
@@ -36,7 +34,10 @@ class DateDiff {
     return year % 100 === 0 ? year % 400 === 0 : year % 4 === 0;
   }
 
-  calculateDaysBetween(startDate, endDate) {
+  calculateDaysBetween() {
+    const startDate = this.startDate;
+    const endDate = this.endDate;
+
     // Start with some simple validation
     if (
       !startDate ||
@@ -97,4 +98,4 @@ class DateDiff {
     return totalDaysBetweenDates;
   }
 }
-new DateDiff("1900-01-01", "2000-01-01");
+console.log(new DateDiff("1900-01-01", "2000-01-01").calculateDaysBetween());
