@@ -1,7 +1,9 @@
 class DateDiff {
   constructor(fromDate, endDate) {
-    this.startDate = this.stringToDate(fromDate);
-    this.endDate = this.stringToDate(endDate);
+    this.dates = {
+      startDate: this.stringToDate(fromDate),
+      endDate: this.stringToDate(endDate),
+    };
     this.months = {
       1: 31,
       2: 28,
@@ -34,23 +36,41 @@ class DateDiff {
     return year % 100 === 0 ? year % 400 === 0 : year % 4 === 0;
   }
 
+  validateDates(startDate, endDate) {
+    if (!startDate || !endDate) {
+      return false;
+    }
+
+    if (startDate.year <= 1582 || endDate.year <= 1582) {
+      return false;
+    }
+
+    if (endDate.year < startDate.year) {
+      return false;
+    }
+
+    if (startDate.month === 2) {
+      if (startDate.day > (this.isYearLeapYear(startDate.year) ? 29 : 28)) {
+        return false;
+      }
+    }
+
+    if (endDate.month === 2) {
+      if (endDate.day > (this.isYearLeapYear(endDate.year) ? 29 : 28)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   calculateDaysBetween() {
-    const startDate = this.startDate;
-    const endDate = this.endDate;
+    const { startDate, endDate } = this.dates;
 
     // Start with some simple validation
-    if (
-      !startDate ||
-      !endDate ||
-      startDate.year <= 1582 ||
-      endDate.year <= 1582 ||
-      endDate.year < startDate.year ||
-      (startDate.month === 2 &&
-        startDate.day > (this.isYearLeapYear(startDate.year) ? 29 : 28)) ||
-      (endDate.month === 2 &&
-        endDate.day > (this.isYearLeapYear(endDate.year) ? 29 : 28))
-    ) {
-      return "Invalid dates.";
+    try {
+      this.validateDates(startDate, endDate);
+    } catch (error) {
+      throw new Error("Invalid dates.");
     }
 
     // initial calculations
@@ -58,6 +78,7 @@ class DateDiff {
       365 * endDate.year +
       parseInt(endDate.year / 4) -
       parseInt(endDate.year / 100);
+
     const daysPassedUntilStartYear =
       365 * startDate.year +
       parseInt(startDate.year / 4) -
