@@ -58,7 +58,6 @@ class DateDiff {
       365 * endDate.year +
       parseInt(endDate.year / 4) -
       parseInt(endDate.year / 100);
-
     const daysPassedUntilStartYear =
       365 * startDate.year +
       parseInt(startDate.year / 4) -
@@ -98,4 +97,4 @@ class DateDiff {
     return totalDaysBetweenDates;
   }
 }
-console.log(new DateDiff("1900-01-01", "2000-01-01").calculateDaysBetween());
+export default DateDiff;
