@@ -36,42 +36,51 @@ class DateDiff {
     return year % 100 === 0 ? year % 400 === 0 : year % 4 === 0;
   }
 
-  validateDates(startDate, endDate) {
-    if (!startDate || !endDate) {
-      return false;
-    }
+  validateDates() {
+    const { startDate, endDate } = this.dates;
 
-    if (startDate.year <= 1582 || endDate.year <= 1582) {
-      return false;
-    }
-
-    if (endDate.year < startDate.year) {
-      return false;
-    }
-
-    if (startDate.month === 2) {
-      if (startDate.day > (this.isYearLeapYear(startDate.year) ? 29 : 28)) {
-        return false;
+    try {
+      if (!startDate || !endDate) {
+        throw "Dates provided are invalid.";
       }
-    }
 
-    if (endDate.month === 2) {
-      if (endDate.day > (this.isYearLeapYear(endDate.year) ? 29 : 28)) {
-        return false;
+      if (startDate.year <= 1582 || endDate.year <= 1582) {
+        throw "Year cannot be less than 1582";
       }
+
+      if (endDate.year < startDate.year) {
+        throw "End year cannot be less than startyear";
+      }
+
+      if (startDate.month === 2) {
+        if (startDate.day > (this.isYearLeapYear(startDate.year) ? 29 : 28)) {
+          throw "Start day does not exist in February";
+        }
+      }
+
+      if (endDate.month === 2) {
+        if (endDate.day > (this.isYearLeapYear(endDate.year) ? 29 : 28)) {
+          throw "End day does not exist in February";
+        }
+      }
+
+      if (startDate.day > this.months[startDate.month]) {
+        throw "Start day does not exist in month " + startDate.month;
+      }
+
+      if (endDate.day > this.months[startDate.month]) {
+        throw "End day does not exist in month " + startDate.month;
+      }
+    } catch (error) {
+      throw new Error(error);
     }
-    return true;
   }
 
   calculateDaysBetween() {
     const { startDate, endDate } = this.dates;
 
     // Start with some simple validation
-    try {
-      this.validateDates(startDate, endDate);
-    } catch (error) {
-      throw new Error("Invalid dates.");
-    }
+    this.validateDates();
 
     // initial calculations
     const daysPassedUntilEndYear =
